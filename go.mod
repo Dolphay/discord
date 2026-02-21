@@ -5,6 +5,7 @@ go 1.25.0
 toolchain go1.26.0
 
 require (
+	github.com/Dolphay/mautrix_tmp v0.16.6
 	github.com/bwmarrin/discordgo v0.27.0
 	github.com/gabriel-vasile/mimetype v1.4.9
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
@@ -16,12 +17,12 @@ require (
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/stretchr/testify v1.10.0
 	github.com/yuin/goldmark v1.7.12
+	go.mau.fi/mautrix-discord v0.7.6
 	go.mau.fi/util v0.2.2-0.20231228160422-22fdd4bbddeb
 	golang.org/x/exp v0.0.0-20250711185948-6ae5c78190dc
 	golang.org/x/sync v0.16.0
 	maunium.net/go/maulogger/v2 v2.4.1
 	maunium.net/go/mautrix v0.16.3-0.20250810202616-6bc5698125c2
-	github.com/Dolphay/mautrix_tmp v0.16.6
 )
 
 require (

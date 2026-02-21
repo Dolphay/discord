@@ -21,6 +21,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/Dolphay/mautrix_tmp/format"
 	"github.com/bwmarrin/discordgo"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -29,7 +30,6 @@ import (
 	"go.mau.fi/util/variationselector"
 	"golang.org/x/exp/slices"
 	"maunium.net/go/mautrix/event"
-	"maunium.net/go/mautrix/format"
 	"maunium.net/go/mautrix/format/mdext"
 	"maunium.net/go/mautrix/id"
 )
@@ -237,6 +237,16 @@ var matrixHTMLParser = &format.HTMLParser{
 			return fmt.Sprintf("[%s](%s)", escapeDiscordMarkdown(text), href)
 		}
 	},
+	ImageConverter: func(src, alt, title, width, height string, isEmoji bool, ctx format.Context) string {
+		if !isEmoji {
+			return ""
+		}
+
+		portal := ctx.ReturnData[formatterContextPortalKey].(*Portal)
+		emoji := portal.getEmojiByMXC(id.MustParseContentURI(src))
+
+		return fmt.Sprintf("<:%s:%d>", emoji.Name, emoji.EmojiID)
+	},
 }
 
 func (portal *Portal) parseMatrixHTML(content *event.MessageEventContent, allowedLinkPreviews []string) (string, *discordgo.MessageAllowedMentions) {
@@ -246,6 +256,7 @@ func (portal *Portal) parseMatrixHTML(content *event.MessageEventContent, allowe
 		RepliedUser: true,
 	}
 	if content.Format == event.FormatHTML && len(content.FormattedBody) > 0 {
+
 		ctx := format.NewContext()
 		ctx.ReturnData[formatterContextInputAllowedLinkPreviewsKey] = allowedLinkPreviews
 		ctx.ReturnData[formatterContextPortalKey] = portal

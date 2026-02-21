@@ -1,4 +1,4 @@
-module go.mau.fi/mautrix-discord
+module github.com/Dolphay/discord
 
 go 1.25.0
 
@@ -21,6 +21,7 @@ require (
 	golang.org/x/sync v0.16.0
 	maunium.net/go/maulogger/v2 v2.4.1
 	maunium.net/go/mautrix v0.16.3-0.20250810202616-6bc5698125c2
+	github.com/Dolphay/mautrix_tmp v0.16.6
 )
 
 require (

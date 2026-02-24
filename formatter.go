@@ -245,6 +245,10 @@ var matrixHTMLParser = &format.HTMLParser{
 		portal := ctx.ReturnData[formatterContextPortalKey].(*Portal)
 		emoji := portal.getEmojiByMXC(id.MustParseContentURI(src))
 
+		if emoji == nil {
+			return ""
+		}
+
 		return fmt.Sprintf("<:%s:%d>", emoji.Name, emoji.EmojiID)
 	},
 }

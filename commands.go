@@ -50,6 +50,27 @@ type WrappedCommandEvent struct {
 
 var HelpSectionPortalManagement = commands.HelpSection{Name: "Portal management", Order: 20}
 
+var RoomEmoteEvent = event.Type{"im.ponies.room_emotes", event.StateEventType}
+
+type EmotePackContent struct {
+	DisplayName string        `json:"display_name,omitempty"`
+	AvatarURL   id.ContentURI `json:"avatar_url,omitempty"`
+	Usage       []string      `json:"usage"`
+	Attribution string        `json:"attribution,omitempty"`
+}
+
+type EmotePackImage struct {
+	Url   id.ContentURI `json:"url"`
+	Body  string        `json:"body,omitempty"`
+	Info  string        `json:"info,omitempty"`
+	Usage []string      `json:"usage"`
+}
+
+type RoomEmoteEventContent struct {
+	Images map[string]EmotePackImage `json:"images,omitempty"`
+	Pack   EmotePackContent          `json:"pack,omitempty"`
+}
+
 func (br *DiscordBridge) RegisterCommands() {
 	proc := br.CommandProcessor.(*commands.Processor)
 	proc.AddHandlers(
@@ -549,7 +570,7 @@ var cmdGuilds = &commands.FullHandler{
 	Help: commands.HelpMeta{
 		Section:     HelpSectionPortalManagement,
 		Description: "Guild bridging management",
-		Args:        "<status/bridge/unbridge/bridging-mode> [_guild ID_] [...]",
+		Args:        "<status/bridge/unbridge/bridging-mode/custom-emotes> [_guild ID_] [...]",
 	},
 	RequiresLogin: true,
 }
@@ -580,6 +601,8 @@ func fnGuilds(ce *WrappedCommandEvent) {
 		fnUnbridgeGuild(ce)
 	case "bridging-mode", "mode":
 		fnGuildBridgingMode(ce)
+	case "custom-emotes":
+		fnGuildCustomEmotes(ce)
 	case "help":
 		ce.Reply(fullGuildsHelp)
 	default:
@@ -655,6 +678,43 @@ func fnGuildBridgingMode(ce *WrappedCommandEvent) {
 	guild.BridgingMode = mode
 	guild.Update()
 	ce.Reply("Set guild bridging mode to %s", mode.Description())
+}
+
+func fnGuildCustomEmotes(ce *WrappedCommandEvent) {
+	if len(ce.Args) == 0 || len(ce.Args) > 2 {
+		ce.Reply("**Usage**: `$cmdprefix guilds custom-emotes <guild ID>`")
+		return
+	}
+
+	guild, err := ce.User.Session.Guild(ce.Args[0])
+	if err != nil {
+		ce.Reply("Error getting guild by ID: %v", err)
+	}
+
+	eventContent := RoomEmoteEventContent{
+		Pack: EmotePackContent{
+			DisplayName: guild.Name,
+			AvatarURL:   ce.User.bridge.GetGuildByID(ce.Args[0], false).AvatarURL,
+			Usage:       []string{"Emoticon"},
+		},
+		Images: map[string]EmotePackImage{},
+	}
+
+	for _, emoji := range guild.Emojis {
+		emojiMXC := ce.Portal.getEmojiMXCByDiscordID(emoji.ID, emoji.Name, emoji.Animated)
+		eventContent.Images[emoji.Name] = EmotePackImage{
+			Url:   emojiMXC,
+			Usage: []string{"Emoticon"},
+		}
+	}
+
+	_, err = ce.User.bridge.Bot.SendStateEvent(ce.User.GetSpaceRoom(), RoomEmoteEvent, guild.Name, eventContent)
+
+	if err != nil {
+		ce.Reply("Error creating emotes: %v", err)
+	} else {
+		ce.Reply("Added the emojis from the guild %s.", guild.Name)
+	}
 }
 
 var cmdBridge = &commands.FullHandler{

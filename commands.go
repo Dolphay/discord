@@ -701,8 +701,8 @@ func fnGuildCustomEmotes(ce *WrappedCommandEvent) {
 	}
 
 	for _, emoji := range guild.Emojis {
-		ce.Reply("%p", ce.Portal.bridge)
-		ce.Reply("%p", ce.Portal.bridge.DMA)
+		ce.Reply("%p", ce.Bridge)
+		ce.Reply("%p", ce.Bridge.DMA)
 		ce.Reply("%s %s %p", emoji.ID, emoji.Name, emoji.Animated)
 		emojiMXC := ce.Portal.getEmojiMXCByDiscordID(emoji.ID, emoji.Name, emoji.Animated)
 		eventContent.Images[emoji.Name] = EmotePackImage{

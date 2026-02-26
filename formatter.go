@@ -239,14 +239,14 @@ var matrixHTMLParser = &format.HTMLParser{
 	},
 	ImageConverter: func(src, alt, title, width, height string, isEmoji bool, ctx format.Context) string {
 		if !isEmoji {
-			return ""
+			return "this is not an emoji"
 		}
 
 		portal := ctx.ReturnData[formatterContextPortalKey].(*Portal)
 		emoji := portal.getEmojiByMXC(id.MustParseContentURI(src))
 
 		if emoji == nil {
-			return ""
+			return "this is nil"
 		}
 
 		return fmt.Sprintf("<:%s:%d>", emoji.Name, emoji.EmojiID)

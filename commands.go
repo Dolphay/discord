@@ -727,6 +727,9 @@ func fnGuildCustomEmotes(ce *WrappedCommandEvent) {
 
 	for _, emoji := range guild.Emojis {
 		emojiMXC := getEmojiMXCByDiscordID(ce, emoji)
+		if emojiMXC.IsEmpty() {
+			continue
+		}
 		eventContent.Images[emoji.Name] = EmotePackImage{
 			Url:   emojiMXC,
 			Usage: []string{"Emoticon"},

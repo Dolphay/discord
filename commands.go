@@ -84,7 +84,7 @@ func getEmojiMXCByDiscordID(ce *WrappedCommandEvent, emoji *discordgo.Emoji) id.
 		url = discordgo.EndpointEmoji(emoji.ID)
 		mimeType = "image/png"
 	}
-	dbFile, err := ce.Bridge.copyAttachmentToMatrix(ce.MainIntent(), url, false, AttachmentMeta{
+	dbFile, err := ce.Bridge.copyAttachmentToMatrix(ce.Bot, url, false, AttachmentMeta{
 		AttachmentID: emoji.ID,
 		MimeType:     mimeType,
 		EmojiName:    emoji.Name,

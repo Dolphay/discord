@@ -90,7 +90,7 @@ func getEmojiMXCByDiscordID(ce *WrappedCommandEvent, emoji *discordgo.Emoji) id.
 		EmojiName:    emoji.Name,
 	})
 	if err != nil {
-		ce.Portal.log.Warn().Err(err).Str("emoji_id", emoji.ID).Msg("Failed to copy emoji to Matrix")
+		ce.Reply("Failed to copy emoji %s (%s) to Matrix", emoji.Name, emoji.ID)
 		return id.ContentURI{}
 	}
 	return dbFile.MXC

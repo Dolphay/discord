@@ -71,6 +71,31 @@ type RoomEmoteEventContent struct {
 	Pack   EmotePackContent          `json:"pack,omitempty"`
 }
 
+func getEmojiMXCByDiscordID(ce *WrappedCommandEvent, emoji *discordgo.Emoji) id.ContentURI {
+	mxc := ce.Bridge.DMA.EmojiMXC(emoji.ID, emoji.Name, emoji.Animated)
+	if !mxc.IsEmpty() {
+		return mxc
+	}
+	var url, mimeType string
+	if emoji.Animated {
+		url = discordgo.EndpointEmojiAnimated(emoji.ID)
+		mimeType = "image/gif"
+	} else {
+		url = discordgo.EndpointEmoji(emoji.ID)
+		mimeType = "image/png"
+	}
+	dbFile, err := ce.Bridge.copyAttachmentToMatrix(ce.Portal.MainIntent(), url, false, AttachmentMeta{
+		AttachmentID: emoji.ID,
+		MimeType:     mimeType,
+		EmojiName:    emoji.Name,
+	})
+	if err != nil {
+		ce.Portal.log.Warn().Err(err).Str("emoji_id", emoji.ID).Msg("Failed to copy emoji to Matrix")
+		return id.ContentURI{}
+	}
+	return dbFile.MXC
+}
+
 func (br *DiscordBridge) RegisterCommands() {
 	proc := br.CommandProcessor.(*commands.Processor)
 	proc.AddHandlers(
@@ -701,8 +726,7 @@ func fnGuildCustomEmotes(ce *WrappedCommandEvent) {
 	}
 
 	for _, emoji := range guild.Emojis {
-		ce.Portal.bridge = ce.Bridge
-		emojiMXC := ce.Portal.getEmojiMXCByDiscordID(emoji.ID, emoji.Name, emoji.Animated)
+		emojiMXC := getEmojiMXCByDiscordID(ce, emoji)
 		eventContent.Images[emoji.Name] = EmotePackImage{
 			Url:   emojiMXC,
 			Usage: []string{"Emoticon"},

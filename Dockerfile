@@ -16,6 +16,7 @@ RUN apk add --no-cache ffmpeg su-exec ca-certificates olm bash jq curl yq-go lot
 COPY --from=builder /usr/bin/mautrix-discord /usr/bin/mautrix-discord
 COPY --from=builder /build/example-config.yaml /opt/mautrix-discord/example-config.yaml
 COPY --from=builder /build/docker-run.sh /docker-run.sh
+
 VOLUME /data
 WORKDIR /data
 

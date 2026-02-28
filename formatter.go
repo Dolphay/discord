@@ -257,7 +257,7 @@ var matrixHTMLParser = &format.HTMLParser{
 			prefix = "a"
 		}
 
-		return fmt.Sprintf("<%s:%s:%s>", prefix, emoji.EmojiName, emoji.ID)
+		return fmt.Sprintf("<%s:%s:%s>", prefix, strings.ReplaceAll(emoji.EmojiName, ":", ""), emoji.ID)
 	},
 }
 

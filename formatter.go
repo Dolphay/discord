@@ -239,18 +239,18 @@ var matrixHTMLParser = &format.HTMLParser{
 	},
 	ImageConverter: func(src, alt, title, width, height string, isEmoji bool, ctx format.Context) string {
 		if !isEmoji {
-			return "this is not an emoji"
+			return ""
 		}
 
 		portal := ctx.ReturnData[formatterContextPortalKey].(*Portal)
 
-		emoji := portal.bridge.DMA.GetEmojiInfo(id.MustParseContentURI(src))
+		emoji := portal.bridge.DB.File.GetEmojiByMXC(id.MustParseContentURI(src))
 
 		if emoji == nil {
-			return "this is nil"
+			return ""
 		}
 
-		return fmt.Sprintf("<:%s:%d>", emoji.Name, emoji.EmojiID)
+		return fmt.Sprintf("<:%s:%s>", emoji.EmojiName, emoji.ID)
 	},
 }
 
@@ -264,7 +264,6 @@ func (portal *Portal) parseMatrixHTML(content *event.MessageEventContent, allowe
 		ctx := format.NewContext()
 		ctx.ReturnData[formatterContextInputAllowedLinkPreviewsKey] = allowedLinkPreviews
 		ctx.ReturnData[formatterContextPortalKey] = portal
-		fmt.Printf("%v", portal.bridge)
 		ctx.ReturnData[formatterContextAllowedMentionsKey] = allowedMentions
 		if content.Mentions != nil {
 			ctx.ReturnData[formatterContextInputAllowedMentionsKey] = content.Mentions.UserIDs

@@ -327,10 +327,6 @@ func (br *DiscordBridge) copyAttachmentToMatrix(intent *appservice.IntentAPI, ur
 	return
 }
 
-func (portal *Portal) getEmojiByMXC(mxc id.ContentURI) *EmojiMediaData {
-	return portal.bridge.DMA.GetEmojiInfo(mxc)
-}
-
 func (portal *Portal) getEmojiMXCByDiscordID(emojiID, name string, animated bool) id.ContentURI {
 	mxc := portal.bridge.DMA.EmojiMXC(emojiID, name, animated)
 	if !mxc.IsEmpty() {

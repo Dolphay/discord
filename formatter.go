@@ -250,6 +250,8 @@ var matrixHTMLParser = &format.HTMLParser{
 			return ""
 		}
 
+		fmt.Printf("%v", emoji)
+
 		return fmt.Sprintf("<:%s:%s>", emoji.EmojiName, emoji.ID)
 	},
 }

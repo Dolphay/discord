@@ -261,11 +261,10 @@ func (portal *Portal) parseMatrixHTML(content *event.MessageEventContent, allowe
 		RepliedUser: true,
 	}
 	if content.Format == event.FormatHTML && len(content.FormattedBody) > 0 {
-
 		ctx := format.NewContext()
 		ctx.ReturnData[formatterContextInputAllowedLinkPreviewsKey] = allowedLinkPreviews
 		ctx.ReturnData[formatterContextPortalKey] = portal
-		fmt.Printf("%v", portal)
+		fmt.Printf("%v", portal.bridge)
 		ctx.ReturnData[formatterContextAllowedMentionsKey] = allowedMentions
 		if content.Mentions != nil {
 			ctx.ReturnData[formatterContextInputAllowedMentionsKey] = content.Mentions.UserIDs

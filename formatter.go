@@ -250,7 +250,6 @@ var matrixHTMLParser = &format.HTMLParser{
 			return ""
 		}
 
-		fmt.Printf("%v", emoji)
 		prefix := ""
 
 		if emoji.MimeType == "image/gif" {

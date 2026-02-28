@@ -251,8 +251,13 @@ var matrixHTMLParser = &format.HTMLParser{
 		}
 
 		fmt.Printf("%v", emoji)
+		prefix := ""
 
-		return fmt.Sprintf("<:%s:%s>", emoji.EmojiName, emoji.ID)
+		if emoji.MimeType == "image/gif" {
+			prefix = "a"
+		}
+
+		return fmt.Sprintf("<%s:%s:%s>", prefix, emoji.EmojiName, emoji.ID)
 	},
 }
 

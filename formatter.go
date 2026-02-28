@@ -17,6 +17,7 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"regexp"
 	"strings"
@@ -30,6 +31,7 @@ import (
 	"go.mau.fi/util/variationselector"
 	"golang.org/x/exp/slices"
 	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/federation"
 	"maunium.net/go/mautrix/format/mdext"
 	"maunium.net/go/mautrix/id"
 )
@@ -243,8 +245,10 @@ var matrixHTMLParser = &format.HTMLParser{
 		}
 
 		portal := ctx.ReturnData[formatterContextPortalKey].(*Portal)
-		dma := newDirectMediaAPI(portal.bridge)
-		emoji := dma.GetEmojiInfo(id.MustParseContentURI(src))
+
+		parsed, _ := federation.ParseSynapseKey(portal.bridge.Config.Bridge.DirectMedia.ServerKey)
+		mediaID, _ := ParseMediaID(id.MustParseContentURI(src).FileID, sha256.Sum256(parsed.Priv.Seed()))
+		emoji, _ := mediaID.Data.(*EmojiMediaData)
 
 		if emoji == nil {
 			return "this is nil"

@@ -246,7 +246,7 @@ var matrixHTMLParser = &format.HTMLParser{
 		emoji := portal.bridge.DMA.GetEmojiInfo(id.MustParseContentURI(src))
 
 		if portal.bridge.DMA == nil || id.MustParseContentURI(src).IsEmpty() || id.MustParseContentURI(src).Homeserver != portal.bridge.DMA.cfg.ServerName {
-			return fmt.Sprintf("%t %t", portal.bridge.DMA == nil, id.MustParseContentURI(src).IsEmpty())
+			return fmt.Sprintf("%v %v", portal.bridge, portal.bridge.DMA)
 		}
 		mediaID, err := ParseMediaID(id.MustParseContentURI(src).FileID, portal.bridge.DMA.signatureKey)
 		if err != nil {
